@@ -15,7 +15,6 @@ def biseccion(f, a, b, tol):
     i = 0
     x = 0
     if (isBolsano(a, b, f)):
-        print('entró')
         tempA = a
         tempB = b
         e = (b - a) / 2
