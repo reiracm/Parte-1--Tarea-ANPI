@@ -16,12 +16,22 @@ import numpy as np
         |       Booleano que indica si cumple el teorema de Bolzano
     '''
 def isBolsano(a, b, func):
-    x = a
-    fa = eval(func)
+    
+    f = lambda x: eval(func, {'x': x, 'pi': np.pi, 'e': np.e,
+                              'exp': exp, 'sqrt': sqrt,
+                              'arccos': acos, 'sin': sin, 'tan': tan, 
+                              'ln': np.log,
+                              'log10': np.log10})  
+    
+    fa = f(a)
+    fb = f(b)
+    
+    print("------------")
     print(fa)
-    x = b
-    fb = eval(func)
+    print()
     print(fb)
+    print("------------")
+
     return (fa * fb <= 0)
 
 '''
@@ -43,33 +53,32 @@ def isBolsano(a, b, func):
         |       Valor al que converge la función
     '''
 def biseccion(f, a, b, tol):
+   #Inicializacion de la variable i que cuenta las iteraciones y x que es la aproximacion 
+    
     i = 0
     x = 0
     
-    #Si cumple con el Teorema de Bolzano, calcula el error y procede con la división de intervalos
-    
     if (isBolsano(a, b, f)):
+        
+        #Si cumple con el teorema el metodo continúa ejecutandose
+        
         tempA = a
         tempB = b
         e = (b - a) / 2
-        
-        #Mientras el error sea mayor a la tolerancia, la iteración continúa.
-        
         while (e >= tol):
+            
+            #Mientras no haya alcanzado el margen de error sigue dividiendo los intervalos que cumplan  con el teorema
+            
             x = (tempA + tempB) / 2
             if(isBolsano(x, tempB, f)):
-              tempA = x
+                tempA = x
             elif(isBolsano(tempA, x, f)):
-              tempB = x
+                tempB = x
             i = i + 1
             e = (b - a) / (2**i)
-            
-    #Finaliza el ciclo y retorna el resultado        
-            
     return i, x
 
-#biseccion("((log10(7/x)/(1/10)*ln(10))+(x*(6-x)/(((2*10**2*arccos(x/2*10)-x*sqrt(10**2-(x**2/4)))**2/2*(10*4/ln(10)))**2)*((1/(2*10**2*arccos(x/2*10)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2))))", 1, 2, 0.01)
-
+#biseccion("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
 '''
     Parametros:
         | ------
