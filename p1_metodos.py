@@ -97,28 +97,43 @@ def biseccion(f, a, b, tol):
         |   xAprox :
         |       Valor al que converge la función
     '''
-def secante(f, x0, x1, tol):
-    xCurr = x1
-    xPrev = x0
+def secante(func, x0, x1, tol):
+
+    f = lambda x: eval(func, {'x': x, 'pi': np.pi, 'e': np.e,
+                              'exp': exp, 'sqrt': sqrt,
+                              'arccos': acos, 'sin': sin, 'tan': tan, 
+                              'ln': np.log,
+                              'log10': np.log10})
+    
+    # store initial values
     i = 1
+    fx0 = f(x0)
+    print(fx0)
+    fx1 = f(x1)
+    print(fx1)
     tempTol = 1
     
-    #Se evalúa la función con los valores de X anterior y actual hasta que cumpla con el margen de error deseado
-    
-    while ( tempTol >= tol):
-        i = i + 1
-        x = xCurr
-        fxCurr = eval(f)
-        x = xPrev
-        fxPrev = eval(f)
-        xAprox = xCurr - ((xCurr - xPrev) / (fxCurr - fxPrev)) * fxCurr
-        xPrev = xCurr
-        tempTol = (abs(xAprox - xCurr) / xAprox)
-        xCurr = xAprox
-    return xAprox, i
+    while tempTol >= tol:
+        
+        # Calcular aproximacion
+        
+        x2 = (x0 * fx1 - x1 * fx0) / (fx1 - fx0)
 
-#secante("log10(7/x)/(1/10)*ln(10)+x*(6-x)/((2*10**2*arccos(x/(2*10))-x*sqrt(10**2-(x**2/4)))**2/(2*(10*4/ln(10)))**2*(1/(2*10**2*arccos(x/(2*10))-x*sqrt(10**2-(x**2/4)))+(1/pi*10**2)))", 0, 1, 0.001)
+        print(x2)
+        
+        # Renombrar variables
 
+        tempTol = (abs(x2 - x1) / x2)
+        
+        x0,  x1  = x1,  x2
+        
+        #Incrementar iteracion
+
+        i += 1
+        
+    return x2,i
+
+#secante("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
 
 '''
     Parametros:
