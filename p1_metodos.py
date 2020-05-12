@@ -153,37 +153,44 @@ def secante(func, x0, x1, tol):
         |   xAprox :
         |       Valor al que converge la función
     '''
-def falsaPosicion(f, x0, x1, tol):
+def falsaPosicion(func, x0, x1, tol):
+
+    f = lambda x: eval(func, {'x': x, 'pi': np.pi, 'e': np.e,
+                              'exp': exp, 'sqrt': sqrt,
+                              'arccos': acos, 'sin': sin, 'tan': tan, 
+                              'ln': np.log, 'log10': np.log10})
+
+    #Revisar el Teorema de Bolsano
+    print(f(x0))
+    print(f(x1))
+
+    fx0 = f(x0)
+    fx1 = f(x1)
     
-    #Posición anterior y actual de la aproximación
-    
-    xCurr = x1
-    xPrev = x0
-    i = 1
-    tempTol = 1
-    
-     #Si cumple con el Teorema de Bolzano, calcula el error y procede con la división de intervalos
-    
-    if(isBolsano(x0,x1,f)):
-        
-        #Se evalúa la función con los valores de X anterior y actual hasta que cumpla con el margen de error deseado
-        
-        while(tempTol >= tol):
-            i = i + 1
-            x = xCurr
-            fxCurr = eval(f)
-            x = xPrev
-            fxPrev = eval(f)
+    if(fx0*fx1 <= 0):
+
+        iterations = 1
+        xnC = x1
+        xnP = 0
+        fx2 = f(xnC)
+
+        while(abs(fx2) >= tol):
+
+            #Calculo de la aproximacion
+            xnC = x1 - fx1*((x1 - x0) / (fx1 - fx0))
+            print(xnC)
+            xnP = x1
+
+            if(xnC == xnP):
+                return [xnC, iterations]
+                
             
-            #Calculo de la siguiente aproximación
-            
-            xAprox = xCurr - ((xCurr - xPrev) / (fxCurr - fxPrev)) * fxCurr
-            tempTol = (abs(xAprox - xCurr) / xAprox)
-            
-            #Calculo de los nuevos valores del intervalo
-            
-            if(isBolsano(xPrev, xAprox, f)):
-                xCurr = xAprox
-            elif(isBolsano(xAprox, xCurr, f)):
-                xPrev = xAprox
-    return xAprox, i
+            #Escoger el nuevo subintervalo
+            if(fx0*fx2):
+                x1 = xnC
+            else:
+                x0 = xnC
+
+            iterations += 1
+
+    return [xnC, iterations]
