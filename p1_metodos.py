@@ -53,7 +53,8 @@ def isBolsano(a, b, func):
         |       Valor al que converge la función
     '''
 def biseccion(f, a, b, tol):
-   #Inicializacion de la variable i que cuenta las iteraciones y x que es la aproximacion 
+    
+    #Inicializacion de la variable i que cuenta las iteraciones y x que es la aproximacion 
     
     i = 0
     x = 0
@@ -61,7 +62,8 @@ def biseccion(f, a, b, tol):
     if (isBolsano(a, b, f)):
         
         #Si cumple con el teorema el metodo continúa ejecutandose
-        
+        itArray = []
+        errArray = []
         tempA = a
         tempB = b
         e = (b - a) / 2
@@ -76,6 +78,16 @@ def biseccion(f, a, b, tol):
                 tempB = x
             i = i + 1
             e = (b - a) / (2**i)
+            itArray.append(i)
+            errArray.append(e)
+
+
+    plt.plot(itArray,errArray)
+    plt.ylabel('Errores')
+    plt.xlabel('Iteraciones')
+
+    plt.show()
+        
     return i, x
 
 #biseccion("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
