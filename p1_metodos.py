@@ -190,23 +190,35 @@ def falsaPosicion(func, x0, x1, tol):
 
     fx0 = f(x0)
     fx1 = f(x1)
+
+    itArray = []
+    errArray = []
+    
     
     if(fx0*fx1 <= 0):
 
-        iterations = 1
+        i = 1
         xnC = x1
         xnP = 0
         fx2 = f(xnC)
+        tempTol = 1
 
-        while(abs(fx2) >= tol):
+        while( tempTol >= tol):
 
             #Calculo de la aproximacion
             xnC = x1 - fx1*((x1 - x0) / (fx1 - fx0))
             print(xnC)
             xnP = x1
+            tempTol = abs(xnC-x1/xnC)
 
             if(xnC == xnP):
-                return [xnC, iterations]
+                
+                plt.plot(itArray,errArray)
+                plt.ylabel('Errores')
+                plt.xlabel('Iteraciones')
+                plt.show()
+
+                return [xnC, i]
                 
             
             #Escoger el nuevo subintervalo
@@ -215,6 +227,16 @@ def falsaPosicion(func, x0, x1, tol):
             else:
                 x0 = xnC
 
-            iterations += 1
+            i += 1
+            itArray.append(i)
+            errArray.append(tempTol)
 
-    return [xnC, iterations]
+    plt.plot(itArray,errArray)
+    plt.ylabel('Errores')
+    plt.xlabel('Iteraciones')
+
+    plt.show()
+    return [xnC, i]
+
+#falsaPosicion("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
+
