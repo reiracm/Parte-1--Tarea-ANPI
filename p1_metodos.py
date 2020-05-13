@@ -114,8 +114,7 @@ def secante(func, x0, x1, tol):
     f = lambda x: eval(func, {'x': x, 'pi': np.pi, 'e': np.e,
                               'exp': exp, 'sqrt': sqrt,
                               'arccos': acos, 'sin': sin, 'tan': tan, 
-                              'ln': np.log,
-                              'log10': np.log10})
+                              'ln': np.log, 'log10': np.log10})
     
     # store initial values
     i = 1
@@ -124,6 +123,8 @@ def secante(func, x0, x1, tol):
     fx1 = f(x1)
     print(fx1)
     tempTol = 1
+    itArray = []
+    errArray = []
     
     while tempTol >= tol:
         
@@ -142,9 +143,20 @@ def secante(func, x0, x1, tol):
         #Incrementar iteracion
 
         i += 1
-        
-    return x2,i
 
+        itArray.append(i)
+        errArray.append(tempTol)
+
+
+
+    plt.plot(itArray,errArray)
+    plt.ylabel('Errores')
+    plt.xlabel('Iteraciones')
+
+    plt.show()
+    
+    return x2,i
+    
 #secante("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
 
 '''
