@@ -1,6 +1,9 @@
 from sympy import *
 from numpy import *
 import numpy as np
+import math
+import matplotlib.pyplot as plt
+
 '''
     Parametros:
         | ------
@@ -94,7 +97,7 @@ def biseccion(f, a, b, tol):
 '''
     Parametros:
         | ------
-        | f:
+        | function:
         |    Función de una variable a evaluar
         | x0:
         |    Valor x0 inicial
@@ -104,58 +107,42 @@ def biseccion(f, a, b, tol):
         |   Tolerancia
     Salidas:
         | --------
-        |   i :
+        |   iterations :
         |       Número de iteraciones realizadas para llegar a la solución
-        |   xAprox :
+        |   x1 :
         |       Valor al que converge la función
     '''
-def secante(func, x0, x1, tol):
+def secante(function, x0, x1, tol):
 
-    f = lambda x: eval(func, {'x': x, 'pi': np.pi, 'e': np.e,
-                              'exp': exp, 'sqrt': sqrt,
-                              'arccos': acos, 'sin': sin, 'tan': tan, 
-                              'ln': np.log, 'log10': np.log10})
-    
-    # store initial values
-    i = 1
-    fx0 = f(x0)
-    print(fx0)
-    fx1 = f(x1)
-    print(fx1)
-    tempTol = 1
+    f = lambda x: eval(function,  {'x': x, 'pi': np.pi, 'e': np.e,
+                                                      'exp': exp, 'sqrt': sqrt,
+                                      'arccos': acos, 'sin': sin, 'tan': tan, 
+                                              'ln': np.log, 'log10': math.log10})
+
+    #Número de iteraciones y arreglos de iteraciones inician en cero y vacios
+    iterations = 0
     itArray = []
     errArray = []
-    
-    while tempTol >= tol:
-        
-        # Calcular aproximacion
-        
-        x2 = (x0 * fx1 - x1 * fx0) / (fx1 - fx0)
 
-        print(x2)
-        
-        # Renombrar variables
+    while(abs(f(x1)) >= tol):
 
-        tempTol = (abs(x2 - x1) / x2)
-        
-        x0,  x1  = x1,  x2
-        
-        #Incrementar iteracion
+        #Calcula la aproximacion y reacsigna los nuevos valores a x0 y x1
+        x = x1 - f(x1)*((x1 - x0) / (f(x1) - f(x0)))
+        x0 = x1
+        x1 = x
 
-        i += 1
+        #Incrementa el número de iteraciones
+        iterations += 1
+        itArray.append(iterations)
+        errArray.append(abs(f(x1)))
 
-        itArray.append(i)
-        errArray.append(tempTol)
-
-
-
+    #Grafica
     plt.plot(itArray,errArray)
     plt.ylabel('Errores')
     plt.xlabel('Iteraciones')
 
     plt.show()
-    
-    return x2,i
+    return [x1, iterations]
     
 #secante("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
 
@@ -172,71 +159,50 @@ def secante(func, x0, x1, tol):
         |   Tolerancia
     Salidas:
         | --------
-        |   i :
+        |   iterations :
         |       Número de iteraciones realizadas para llegar a la solución
-        |   xAprox :
+        |   xn :
         |       Valor al que converge la función
     '''
-def falsaPosicion(func, x0, x1, tol):
+def falsaPosicion(function, x0, x1, tol):
 
-    f = lambda x: eval(func, {'x': x, 'pi': np.pi, 'e': np.e,
-                              'exp': exp, 'sqrt': sqrt,
-                              'arccos': acos, 'sin': sin, 'tan': tan, 
-                              'ln': np.log, 'log10': np.log10})
-
-    #Revisar el Teorema de Bolsano
-    print(f(x0))
-    print(f(x1))
-
-    fx0 = f(x0)
-    fx1 = f(x1)
-
+    f = lambda x: eval(function,  {'x': x, 'pi': np.pi, 'e': np.e,
+                                                      'exp': exp, 'sqrt': sqrt,
+                                      'arccos': acos, 'sin': sin, 'tan': tan, 
+                                              'ln': np.log, 'log10': math.log10})
     itArray = []
     errArray = []
     
-    
-    if(fx0*fx1 <= 0):
+    #Revisa si cumple el teorema de Bolzano
+    if(f(x0)*f(x1) <= 0):
 
-        i = 1
-        xnC = x1
-        xnP = 0
-        fx2 = f(xnC)
-        tempTol = 1
+        iterations = 0
+        xn = x1
 
-        while( tempTol >= tol):
+        while(abs(f(xn)) >= tol):
 
-            #Calculo de la aproximacion
-            xnC = x1 - fx1*((x1 - x0) / (fx1 - fx0))
-            print(xnC)
-            xnP = x1
-            tempTol = abs(xnC-x1/xnC)
-
-            if(xnC == xnP):
-                
-                plt.plot(itArray,errArray)
-                plt.ylabel('Errores')
-                plt.xlabel('Iteraciones')
-                plt.show()
-
-                return [xnC, i]
-                
+            #Calcula la siguiente aproximacion
+            xn = x1 - f(x1)*((x1 - x0) / (f(x1) - f(x0)))
             
-            #Escoger el nuevo subintervalo
-            if(fx0*fx2):
-                x1 = xnC
+            #Escoge el nuevo subintervalo para la siguiente aproximación
+            if(f(x0)*f(xn)):
+                x1 = xn
             else:
-                x0 = xnC
+                x0 = xn
 
-            i += 1
-            itArray.append(i)
-            errArray.append(tempTol)
+            #Incrementa el numero de iteraciones
+            iterations += 1
+            itArray.append(iterations)
+            errArray.append(abs(f(xn)))
 
+    #Grafica
     plt.plot(itArray,errArray)
     plt.ylabel('Errores')
     plt.xlabel('Iteraciones')
 
     plt.show()
-    return [xnC, i]
+
+    return [xn, iterations]
 
 #falsaPosicion("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))", 0.1, 19, 10**(-10))
 
