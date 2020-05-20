@@ -22,17 +22,15 @@ def ssm(func,xo,tol):
         itera += 1
 
         fx = f(xC)
-        print(fx)
         z = f(xC +fx)
-        print(z)
             
         y = xC - ((fx**2)/(z-fx))
         fy = f(y)
           
         xAprox = xC - (fx**3)/((z-fx)*(fx-fy))
-            
+        tempTol = abs(xAprox-xC)
         xC = xAprox
-        tempTol = abs(xC-xAprox)
+
         error.append(tempTol)
         iteracion.append(itera)
             
