@@ -3,6 +3,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+'''
+    Parametros:
+        | ------
+        | func:
+        |    Funcion de una variable
+        | xo:
+        |    Valor para iniciar la aproximacion
+        | tol:
+        |   Tolerancia
+    Salidas:
+        | --------
+        |   xAprox:
+        |       Aproximacion hacia donde converge la funcion
+        |   itera:
+        |       Numero de iteraciones realizadas
+    '''
 def ssm(func,xo,tol):
 
     
