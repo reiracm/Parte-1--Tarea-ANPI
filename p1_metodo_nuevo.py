@@ -41,3 +41,5 @@ def ssm(func,xo,tol):
     plt.show()
 
     return xAprox, itera
+
+ssm("((log10(7/x)/((1/10)*ln(10)))+(x*(6-x)/(((2*10**2*arccos(x/20)-x*sqrt(10**2-(x**2/4)))**2/(2*(40/ln(10))**2))*((1/(20**2*arccos(x/20)-x*sqrt(10**2-(x**2/4))))+(1/pi*10**2)))))",1, 10**(-10))
