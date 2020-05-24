@@ -1,48 +1,45 @@
-function gradienteR=p2_bfgs(f,variables,pk,x0) 
+function xk=p2_bfgs(f,variables,iter) 
   pkg load symbolic;
-  syms x,y;  
-  #Se necesita encontrar el gradiente de la funcion f primero
-  xk=x0
-  B=eye(4,4)         #Matriz Identidad
-  Bk=B
-  lambdak=1;         #Considerar el valor inicial de lambda 1
-  sigma1=0.5;
-  sigma2=0.2;   
-  error= norm(g)   # El error es la norma del gradiente de f
+  syms x y;
+
+  f=sym(f);     %Convierte f (char) a symbolic
+  x0=[1,1];     %Vector Inicial
+  x0=reshape(x0,2,1);  % Vector Inicial dado como matriz
+  xk=x0;
+  lambdak=1;
+  sigma1=0.25;
+  sigma2=0.5; 
+  g=gradient(f, variables); %Gradiente de f
+  gxk=subs(g, variables, xk);  %Gradiente evaluado en el vector inicial, es vector columna
+  error= double(norm(gxk)); 
+  B=eye(2,2) ;        #Matriz Identidad  
   
-  #METODO BFGS
-  
-  while(error>0.00001)
-    g = gradient(f,x) 
-    gT= transpose(g)   #Traspuesta del Gxk que es el gradiente
-    pk=inv(B)*gk       #Matriz Inversa por gk
+  while(iter>0)
+    gxk=subs(g, variables, xk);  %Gradiente evaluado en el vector inicial, es vector columna
+    pk=-inv(B)*gxk;
     
-    # Wolfe-type inexact line search para determinar ?k
-    
-    while (f(xk+lambdak*pk) > f(xk)+ sigma1*lambdak*gT(xk)*pk & gT(xk+lambdakpk)*pk < sigma2*gT(xk)*pk)
-      lambdak=lambdak/2;
+    primero=double(subs(f, variables, (xk+lambdak*pk)));
+    segundo=double(subs(f, variables, xk)) + sigma1*lambdak* double(transpose(gxk)*pk);
+    tercero= double(double(transpose(subs(g, variables, xk+lambdak*pk)))*pk);
+    cuarto=double(double(transpose(subs(g, variables,xk)))*pk)*sigma2;
+        # Wolfe-type inexact line search para determinar ?k  
+    while ((primero<segundo)&&(tercero > cuarto))
+      lambdak=double(lambdak/2);
     endwhile
     
-    xk1 = xk + lambdak*pk
-    sk = xk1 + xk
+    xk1=xk+lambdak*pk;
+    sk=xk1-xk;
+    yk=subs(g, variables, xk1)-subs(g, variables, xk);
+    skt=transpose(sk);
+    ykt=transpose(yk);
     
-    # Determinar Bk+1
-    ykT=transpose(yk)
-    if (ykT*sk>0)
-      skT=transpose(sk)
-      Bk= B- ((B*sk*skT*B)/(skT*B*sk)) + ((ykt*yk)/(ykt*sk))
+    if (((ykt*sk)/(norm(sk))**2)>norm(subs(g, variables, xk)))
+      Bk=B- ((B*sk*skt*B)/(skt*Bk*sk)) +((yk*ykt)/(ykt*sk));
     else
-      Bk=B
+      Bk=B;
     endif
-    
-    xk=xk1
-    error=transpose(gradient(funcion,x))
-    # yk=  NO SE A QUIEN SE ACTUALIZA
-
+    xk=xk1;
+    error= double(norm(subs(g, variables, xk)))  %Gradiente evaluado en el vector inicial, es vector columna
+    iter=iter-1;
   endwhile
-    
-  
-  
-  
-  
 endfunction
