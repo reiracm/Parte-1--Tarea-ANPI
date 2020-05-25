@@ -1,28 +1,28 @@
-function [xk,error]=p2_bfgs(f,variables,tolerancia,iterMax) 
-    """
-    Esta función aplica el metodo BFGS para la optimizacion de funciones en varias
-    variables.
+function [xk,error,iter]=p2_bfgs(f,variables,tolerancia,iterMax) 
+
+ #   Esta función aplica el metodo BFGS para la optimizacion de funciones en varias
+ #   variables.
     
-    Sintaxis:  p2_bfgs(f,variables,tolerancia,iterMax)
+ #   Sintaxis:  p2_bfgs(f,variables,tolerancia,iterMax)
     
-    Parámetros Iniciales: 
-                f = funcion continua, diferenciable, separable y escalable, a la cual se encontrara los valores optimos de sus variables
-                variables = Es un vector con las variables utilizadas en f
-                x1 = Es el error minimo aceptado para la resolucion del metodo
-                tolerancia = un número positivo que representa a la tolerancia para el criterio |f(x_k)|<tol
-                iterMax = cantidad de iteraciones máximas a realizar el metodo
+ #   Parámetros Iniciales: 
+ #               f = funcion continua, diferenciable, separable y escalable, a la cual se encontrara los valores optimos de sus variables
+ #               variables = Es un vector con las variables utilizadas en f
+ #               x1 = Es el error minimo aceptado para la resolucion del metodo
+ #               tolerancia = un número positivo que representa a la tolerancia para el criterio |f(x_k)|<tol
+ #               iterMax = cantidad de iteraciones máximas a realizar el metodo
                 
-    Parámetros de Salida: 
-                [xk,error], donde                
-                xk =    Vector con la aproximacion de las variables de la funcion f
-                error = Margen de error de las aproximaciones dadas final
+ #   Parámetros de Salida: 
+ #               [xk,error], donde                
+ #               xk =    Vector con la aproximacion de las variables de la funcion f
+ #               error = Margen de error de las aproximaciones dadas final
                 
-    Ejemplo:
-              [lambdak, xk,error] = p2_bfgs('(x1)**2 +(x2)**3 + (x3)**4 +(x4)**4 +(x5)**6',[x1 x2 x3 x4 x5],0.00001,20)
-               Donde el primer parametro es la ecuación Powell Sum Function [69] la cual
-               es una funcion continua, diferenciable, separable y escalable    
-    """
-    
+ #   Ejemplo:
+ #             [xk,error,iter] = p2_bfgs('(x1)**2 +(x2)**3 + (x3)**4 +(x4)**4 +(x5)**6',[x1 x2 x3 x4 x5],0.00001,20)
+ #              Donde el primer parametro es la ecuación Powell Sum Function [69] la cual
+ #              es una funcion continua, diferenciable, separable y escalable    
+ 
+  warning('off', 'all');  
   pkg load symbolic;
   syms x1 x2 x3 x4 x5 ;
   n=length(variables);
@@ -37,10 +37,10 @@ function [xk,error]=p2_bfgs(f,variables,tolerancia,iterMax)
     i++;
   endwhile
   double(x0);
-  x0=reshape(x0,n,1);  % Vector Inicial dado como matriz
+  x0=reshape(x0,n,1)  % Vector Inicial dado como matriz
   
   %-------------------Se definen constantes a utilizar en el metodo BFGS-------------------------
-  xk=x0
+  xk=x0;
   lambdak=1;          % Valor de paso inicial
   sigma1=0.0025; 
   sigma2=0.005;
@@ -62,7 +62,7 @@ function [xk,error]=p2_bfgs(f,variables,tolerancia,iterMax)
   
   %----------------------------Comienza el metodo BFGS ----------------------------------------------
   
-  while ((error>tolerancia)|(iter>iterMax))
+  while ((error>tolerancia)(iter<iterMax))
      gxk=subs(g, variables, xk);  %Gradiente evaluado en el vector inicial, es vector columna
      pk=inv(B)*-gxk;              % Es la direccion del metodo BFGS
      
@@ -74,7 +74,7 @@ function [xk,error]=p2_bfgs(f,variables,tolerancia,iterMax)
      
      %///// Wolfe-type inexact line search para determinar el valor de lambdak (valor de paso) ////// 
      while (!((primero <= segundo)&&(tercero >= cuarto)))
-       lambdak=double(lambdak/(2**kiter))
+       lambdak=double(lambdak/(2**kiter));
        if (lambdak < 10^-5);    % Se evalua el valor de lambdak, pues al ser muy peqeueno, octave lo tomaria como 0
         break;
        endif
