@@ -1,7 +1,7 @@
 function [xk,error,iter]=p2_solucion_aplicacion(f,variables,tolerancia,iterMax) 
 
  #   Esta función aplica el metodo BFGS para la optimizacion de funciones en varias
- #   variables.
+ #   variables en el ejemplo que escogimos  Styblinski-Tank Function
     
  #   Sintaxis:  p2_bfgs(f,variables,tolerancia,iterMax)
     
